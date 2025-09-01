@@ -1,5 +1,7 @@
 ## GAN
 
+I have used this [video](https://www.youtube.com/watch?v=R9VOZnKEBE0&t=591s) to find out how a gan works.
+
 The generative adverserial network (GAN) is a system composed of two networks, a generator and a discriminator. The generator is supposed to generate fake data, while the discriminator is supposed to decide whether or not the generated data is real. The only reason the discriminator exists is to allow the generator to get better at generating fake data resembling the real data. So the discriminator is trying to reduce the loss when discriminating, and the generator would try to trick the discriminator into thinking the generated data is real.
 
 ### Discriminator

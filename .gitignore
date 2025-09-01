@@ -1,0 +1,5 @@
+/.idea/**
+/.idea/runConfigurations/**
+/data/**
+poetry.lock
+poetry.toml

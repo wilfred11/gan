@@ -134,5 +134,27 @@ After 150 epochs.
 
 <img width="1500" height="500" alt="examples_epoch_150" src="https://github.com/user-attachments/assets/28973ec3-11f6-4999-a272-907f232708d0" />
 
+### Some remarks on GAN
+
+#### Dynamic equilibrum
+
+GAN training involves a dynamic equilibrium between the generator and discriminator networks. As one network improves, the other must adapt to maintain the balance. This dynamic nature makes it challenging to determine when the training process has converged, as the networks may continue to evolve and improve even after the loss values stabilize.
+
+#### Non-convex optimization
+
+GANs involve a non-convex optimization problem. The objective function being optimized is non-convex due to the adversarial nature of the training process. This means that the loss landscape contains multiple local minima, making it difficult to find the global optimum. The non-convexity of the objective function can lead to convergence issues and make it challenging to train GANs effectively.
+
+#### Mode colapse
+
+Mode collapse in GANs refers to a scenario where the generator produces a limited variety of samples, often focusing on a few modes of data distribution while ignoring large parts of the data distribution. This phenomenon leads to a lack of diversity in the generated samples, resulting in poor quality and unrealistic outputs.
+
+#### Training instability 
+
+GAN training is highly sensitive to hyperparameters, architecture choices, and initialization[3]. Small changes in these factors can lead to unstable training dynamics, such as oscillations or divergence. Additionally, the discriminator and generator networks may become unbalanced during training, leading to one network overpowering the other.
+
+#### Mitigation
+
+The above challenges can be mitigated by employing diversity-promoting techniques[4], such as adding noise to the input of the generator, using mini-batch discrimination, using alternative loss functions, incorporating regularization terms in the loss function, or designing more complex architectures that can better capture the diversity of the data distribution. 
+
 
 

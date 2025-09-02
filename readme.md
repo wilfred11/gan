@@ -4,6 +4,8 @@ I have used this [video](https://www.youtube.com/watch?v=R9VOZnKEBE0&t=591s) to 
 
 The generative adverserial network (GAN) is a system composed of two networks, a generator and a discriminator. The generator is supposed to generate fake data, while the discriminator is supposed to decide whether or not the generated data is real. The only reason the discriminator exists is to allow the generator to get better at generating fake data resembling the real data. So the discriminator is trying to reduce the loss when discriminating, and the generator would try to trick the discriminator into thinking the generated data is real. In this case the MNIST dataset containing images of digits (28*28 pixels), will be used. The gan will generate random images, so it is not known on beforehand which number will be generated.
 
+As I am only learning the way in which GANs work, I don't want to lose myself into how loss evolves, and adapting the optimizer parameters.
+
 ### Discriminator
 
 The discriminator layer ends up with a linear layer returning 1 feature, this feature should eventually have a value between 0 or a 1, the probability that it's fake or real. A zero should represent the fact the presented data is fake or real. 

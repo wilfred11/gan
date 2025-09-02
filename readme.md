@@ -264,18 +264,20 @@ Training the conditional generator is almost identical to the simple generator. 
 
 Some generated digits before doing any training.
 
-<img width="1500" height="500" alt="examples_epoch_0" src="https://github.com/user-attachments/assets/5c8e26ad-a125-4581-9e11-4aa321c7d933" />
+<img width="1500" height="500" alt="c_examples_epoch_0" src="https://github.com/user-attachments/assets/7a22da6b-7ed4-4332-b9ae-cd34369d4d7f" />
+
 
 After 50 epochs of 64 images each.
 
-<img width="1500" height="500" alt="examples_epoch_50" src="https://github.com/user-attachments/assets/682deda2-1221-4313-afa7-5157d7ee235d" />
+<img width="1500" height="500" alt="c_examples_epoch_50" src="https://github.com/user-attachments/assets/bd1596b5-2caf-4e19-8afc-6f9e7477520a" />
 
 After 100 epochs.
 
-<img width="1500" height="500" alt="examples_epoch_100" src="https://github.com/user-attachments/assets/d6af9c9e-162c-4daa-a51a-4b9d801f3f43" />
+<img width="1500" height="500" alt="c_examples_epoch_100" src="https://github.com/user-attachments/assets/336c5703-b610-4919-bbf3-8ea599731158" />
 
 After 150 epochs.
 
-<img width="1500" height="500" alt="examples_epoch_150" src="https://github.com/user-attachments/assets/28973ec3-11f6-4999-a272-907f232708d0" />
+<img width="1500" height="500" alt="c_examples_epoch_150" src="https://github.com/user-attachments/assets/99eb4e4e-a35c-446b-8775-03aa38190736" />
+
 
 

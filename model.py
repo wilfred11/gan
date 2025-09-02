@@ -24,6 +24,7 @@ class MNISTDiscriminator(nn.Module):
         #print(x.shape)
         return self.discriminator(x)
 
+
 class MNISTGenerator(nn.Module):
     def __init__(self, latent_dim):
         super().__init__()
@@ -40,6 +41,7 @@ class MNISTGenerator(nn.Module):
             nn.Linear(1024, 784),
             nn.Tanh()
         )
+
     def forward(self, noise):
         bath_size=noise.shape[0]
         generated = self.generator(noise)

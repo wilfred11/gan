@@ -12,6 +12,7 @@ torchvision = "^0.23.0"
 matplotlib = "^3.10.5"
 numpy = "^2.3.2"
 tqdm = "^4.67.1"
+wakepy = "^0.10.2.post1"
 
 
 [build-system]

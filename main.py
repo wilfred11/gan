@@ -5,8 +5,9 @@ from torch.utils.data import DataLoader
 
 from data import get_data
 from model import MNISTDiscriminator, MNISTGenerator
-from train import train_gan
-
+from model2 import CGenerator, CDiscriminator
+from train import train_gan, train_cgan
+from wakepy import keep
 from torch import nn
 
 latent_dim = 100
@@ -17,7 +18,7 @@ batch_size =64
 
 
 
-do = 4
+do = 3
 
 if do==1:
     disc_model = MNISTDiscriminator()
@@ -43,16 +44,33 @@ if do==2:
     generator, discriminator, gan_losses, disc_losses = train_gan(generator, discriminator, gen_optimizer, disc_optimizer, trainloader)
 
 if do==3:
+    with keep.running():
+        discriminator = CDiscriminator()
+        generator = CGenerator()
+
+        gen_optimizer = optim.Adam(generator.parameters(), generator_lr)
+        disc_optimizer = optim.Adam(discriminator.parameters(), discriminator_lr)
+
+        train_set, test_set= get_data()
+
+        trainloader = DataLoader(train_set, batch_size=batch_size, shuffle=True)
+
+        generator, discriminator, gan_losses, disc_losses = train_cgan(generator, discriminator, gen_optimizer, disc_optimizer, trainloader)
+
+
+if do==4:
     arr2d= np.array([[1,2,3],[4,5,6],[7,8,9]])
     print(arr2d[-1,-1])
     print(arr2d[2,2])
 
-if do==4:
+if do==5:
     t=torch.randn(3,4)
     print(t)
     m = nn.Tanh()
     input = torch.randn(2)
     output = m(input)
     print(output)
+    generator = CGenerator()
+    print(generator)
 
 

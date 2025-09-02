@@ -72,3 +72,74 @@ def train_gan(generator, discriminator, gen_optimizer, disc_optimizer, dataloade
                 plt.savefig("examples_epoch_"+ str(epoch) +".png")
             generator.train()
     return generator, discriminator, gen_losses, disc_losses
+
+
+def train_cgan(generator, discriminator, gen_optimizer, disc_optimizer, dataloader, num_classes=10, epochs=200, device="cpu", plot_generation_freq=50, plot_loss_freq=20, num_gens=10, latent_dim=100):
+
+    loss_func = BCEWithLogitsLoss()
+    gen_losses, disc_losses = [],[]
+
+    for epoch in tqdm(range(epochs)):
+        generator_epoch_losses= []
+        discriminator_epoch_losses=[]
+        for images,true_digits in dataloader:
+
+            batch_size=images.shape[0]
+            ### Train discriminator ###
+            noise= torch.randn(batch_size, latent_dim)
+            rand_digits = torch.randint(0, num_classes, size=(batch_size, ))
+
+            generated_labels=torch.zeros(batch_size,1)
+            true_labels=torch.ones(batch_size,1)
+            ### generate some samples ###
+            generated_images= generator(noise, rand_digits).detach()
+
+            real_discriminator_pred = discriminator(images, true_digits)
+            gen_discriminator_pred = discriminator(generated_images, rand_digits)
+
+            ### Compute loss ###
+            real_loss = loss_func(real_discriminator_pred, true_labels)
+            fake_loss= loss_func(gen_discriminator_pred, generated_labels)
+            disc_loss = (real_loss+fake_loss)/2
+            discriminator_epoch_losses.append(disc_loss.item())
+
+            disc_optimizer.zero_grad()
+            disc_loss.backward()
+            disc_optimizer.step()
+
+            ### train generator ###
+            rand_digits= torch.randint(0,num_classes, size=(batch_size,))
+            noise= torch.randn(batch_size, latent_dim, device=device)
+            generated_images = generator(noise, rand_digits)
+            gen_discriminator_pred = discriminator(generated_images, rand_digits)
+
+            generator_loss = loss_func(gen_discriminator_pred, true_labels)
+            generator_epoch_losses.append(generator_loss.item())
+
+            gen_optimizer.zero_grad()
+            generator_loss.backward()
+            gen_optimizer.step()
+
+        generator_epoch_losses = np.mean(generator_epoch_losses)
+        discriminator_epoch_losses= np.mean(discriminator_epoch_losses)
+
+        if epoch % plot_loss_freq == 0:
+            print(f"Epoch:{epoch}/{epoch} | Generator Loss: {generator_epoch_losses} | Discriminator Loss: {discriminator_epoch_losses}")
+
+        if epoch % plot_generation_freq == 0:
+            generator.eval()
+            with torch.no_grad():
+                digits =torch.arange(num_classes)
+                noise_sample = torch.randn(num_classes, latent_dim)
+                generated_images = generator(noise_sample, digits)
+
+                fig, ax = plt.subplots(1, num_gens, figsize=(15,5))
+
+                for i in range(num_gens):
+                    img= (generated_images[i].squeeze()+1)/2
+                    ax[i].imshow(img.numpy(), cmap="gray")
+                    ax[i].set_axis_off()
+
+                plt.savefig("c_examples_epoch_"+ str(epoch) +".png")
+            generator.train()
+    return generator, discriminator, gen_losses, disc_losses

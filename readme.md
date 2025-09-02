@@ -156,5 +156,126 @@ GAN training is highly sensitive to hyperparameters, architecture choices, and i
 
 The above challenges can be mitigated by employing diversity-promoting techniques[4], such as adding noise to the input of the generator, using mini-batch discrimination, using alternative loss functions, incorporating regularization terms in the loss function, or designing more complex architectures that can better capture the diversity of the data distribution. 
 
+## The conditional GAN
+
+This GAN makes it possible to generate a labeled image, One can choose the digit to generate.
+
+The main difference between a normal gan and the condiitonal gan is that a label embedding gets concatenated to the noise when generating fake noise. And the discriminator tries to tell from the noise with embedded label whether it is real or fake. Of course the discriminator is fed with real data and real label too.  
+
+### CGAN Generator
+
+```
+class CGenerator(nn.Module):
+    def __init__(self, latent_dim=100, num_classes=10,embedding_dim=16):
+        super().__init__()
+        self.embeddings = nn.Embedding(num_classes, embedding_dim)
+        self.generator = nn.Sequential(
+            nn.Linear(latent_dim+embedding_dim, 256),
+            nn.LeakyReLU(),
+            nn.Dropout(p=0.2),
+            nn.Linear(256, 512),
+            nn.LeakyReLU(),
+            nn.Dropout(p=0.2),
+            nn.Linear(512, 1024),
+            nn.LeakyReLU(),
+            nn.Dropout(p=0.2),
+            nn.Linear(1024, 784),
+            nn.Tanh()
+        )
+
+    def forward(self, noise, labels):
+        bath_size = noise.shape[0]
+        embeddings=self.embeddings(labels)
+        noise = torch.cat([noise, embeddings], dim=-1)
+        generated = self.generator(noise)
+        generated = generated.reshape(bath_size, 1, 28, 28)
+        return generated
+```
+
+### CDiscriminator
+
+```
+class CDiscriminator(nn.Module):
+    def __init__(self, num_classes=10, embedding_dim=16):
+        super().__init__()
+        self.embeddings = nn.Embedding(num_classes, embedding_dim)
+        self.discriminator = nn.Sequential(
+            nn.Linear(784 +embedding_dim, 1024),
+            nn.LeakyReLU(),
+            nn.Dropout(p=0.2),
+            nn.Linear(1024, 512),
+            nn.LeakyReLU(),
+            nn.Dropout(p=0.2),
+            nn.Linear(512, 256),
+            nn.LeakyReLU(),
+            nn.Dropout(p=0.2),
+            nn.Linear(256, 1)
+        )
+    def forward(self, x, labels):
+        batch_size = x.shape[0]
+        embeddings= self.embeddings(labels)
+        x=x.reshape(batch_size, -1)
+        x=torch.cat([x,embeddings], dim=1)
+        return self.discriminator(x)
+```
+
+### Training the CGAN Discriminator
+
+Generating fake data. The rand_digits are the digits by which the noise will be represented.
+
+The discriminator is used to generate some predictions, as to whether the presented image tensor is true or false.
+
+```
+noise= torch.randn(batch_size, latent_dim)
+rand_digits = torch.randint(0, num_classes, size=(batch_size, ))
+generated_labels=torch.zeros(batch_size,1)
+
+generated_images= generator(noise, rand_digits).detach()
+
+real_discriminator_pred = discriminator(images, true_digits)
+gen_discriminator_pred = discriminator(generated_images, rand_digits)
+
+real_loss = loss_func(real_discriminator_pred, true_labels)
+fake_loss= loss_func(gen_discriminator_pred, generated_labels)
+disc_loss = (real_loss+fake_loss)/2
+
+disc_optimizer.zero_grad()
+disc_loss.backward()
+disc_optimizer.step()
+```
+
+### Training the CGAN Generator
+
+Training the conditional generator is almost identical to the simple generator. In this case the discriminator predictions should move towards the true_labels, meaning the discriminator mistakes the generated images for real. That's why the loss_func is fed with discriminator predictions and the true_labels.
+
+```
+ rand_digits= torch.randint(0,num_classes, size=(batch_size,))
+ noise= torch.randn(batch_size, latent_dim, device=device)
+ generated_images = generator(noise, rand_digits)
+ gen_discriminator_pred = discriminator(generated_images, rand_digits)
+
+ generator_loss = loss_func(gen_discriminator_pred, true_labels)
+
+ gen_optimizer.zero_grad()
+ generator_loss.backward()
+ gen_optimizer.step()
+```
+### Generated examples
+
+Some generated digits before doing any training.
+
+<img width="1500" height="500" alt="examples_epoch_0" src="https://github.com/user-attachments/assets/5c8e26ad-a125-4581-9e11-4aa321c7d933" />
+
+After 50 epochs of 64 images each.
+
+<img width="1500" height="500" alt="examples_epoch_50" src="https://github.com/user-attachments/assets/682deda2-1221-4313-afa7-5157d7ee235d" />
+
+After 100 epochs.
+
+<img width="1500" height="500" alt="examples_epoch_100" src="https://github.com/user-attachments/assets/d6af9c9e-162c-4daa-a51a-4b9d801f3f43" />
+
+After 150 epochs.
+
+<img width="1500" height="500" alt="examples_epoch_150" src="https://github.com/user-attachments/assets/28973ec3-11f6-4999-a272-907f232708d0" />
 
 

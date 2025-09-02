@@ -262,7 +262,7 @@ Training the conditional generator is almost identical to the simple generator. 
 ```
 ### Generated examples
 
-Some generated digits before doing any training.
+Some generated digits before doing any training. The images should represent the numbers 0 to 9.
 
 <img width="1500" height="500" alt="c_examples_epoch_0" src="https://github.com/user-attachments/assets/7a22da6b-7ed4-4332-b9ae-cd34369d4d7f" />
 
